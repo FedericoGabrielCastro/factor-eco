@@ -1,0 +1,31 @@
+# Build outputs
+dist/**
+build/**
+
+# Dependencies
+node_modules/**
+
+# Test coverage
+coverage/**
+
+# TypeScript declaration files
+*.d.ts
+
+# Configuration files
+*.config.js
+*.config.d.ts
+jest.config.ts
+vitestConfig.ts
+
+# Cache files
+.eslintcache
+
+# Version control
+.git/**
+
+# IDE files
+.vscode/**
+.idea/**
+
+# Test mocks
+**/__mocks__/** 

@@ -1,0 +1,14 @@
+dist
+build
+node_modules
+coverage
+jest.config.ts
+vitestConfig.ts
+vite.config.js
+vite.config.d.ts
+vitestConfig.js
+vitestConfig.d.ts
+
+# ignore all js and d.ts files
+*.js
+*.d.ts
