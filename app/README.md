@@ -118,12 +118,3 @@ app/
 ## 📚 Documentación API
 - Swagger: `/api/docs/`
 - Redoc: `/api/redoc/`
-
----
-
-## 💡 Notas
-- Todos los comentarios en el código están en inglés.
-- El sistema está preparado para pruebas rápidas y reseteo total del entorno demo.
-- Si usas otra base de datos distinta a SQLite, ajusta el script `setup_demo.sh` según corresponda.
-
----
