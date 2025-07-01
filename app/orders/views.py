@@ -67,6 +67,9 @@ class OrderCreateView(generics.CreateAPIView):
         cart = get_object_or_404(Cart, id=cart_id, user=request.user)
         if cart.status != 'ACTIVO':
             return Response({'error': 'Cart is not active or already finalized.'}, status=status.HTTP_400_BAD_REQUEST)
+        # Prevent finalizing an empty cart
+        if cart.items.count() == 0:
+            return Response({'error': 'No se puede finalizar un carrito vacío.'}, status=status.HTTP_400_BAD_REQUEST)
         # Calculate total payable
         totals = cart.get_total_payable()
         total_paid = totals['total_payable']
@@ -75,27 +78,39 @@ class OrderCreateView(generics.CreateAPIView):
         # Mark cart as finalized
         cart.status = 'FINALIZADO'
         cart.save()
-        # Actualizar VIP
-        self.update_vip_status(cart.user, total_paid)
+        # Actualizar VIP según reglas
+        self.update_vip_status(cart.user)
         serializer = self.get_serializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def update_vip_status(self, user, amount):
+    def update_vip_status(self, user):
         """
-        Update VIP status if user exceeds $10,000 in the current month.
+        Update VIP status:
+        - If user spent > $10,000 in the current month, set VIP for next month.
+        - If user did NOT buy anything in the current month, remove VIP.
         """
         profile, _ = UserProfile.objects.get_or_create(user=user)
         now = timezone.now()
+        # Get all orders for this user in the current month
         month_orders = Order.objects.filter(
             cart__user=user,
             ordered_at__year=now.year,
             ordered_at__month=now.month
         )
         total_month = sum(order.total_paid for order in month_orders)
-        if total_month >= 10000 and not profile.is_vip:
-            profile.is_vip = True
-            profile.vip_since = now
-            profile.save()
+        # VIP if spent > $10,000 this month (VIP applies next month)
+        if total_month >= 10000:
+            if not profile.is_vip:
+                profile.is_vip = True
+                profile.vip_since = now.replace(day=1) + timezone.timedelta(days=32)
+                profile.vip_since = profile.vip_since.replace(day=1)  # First day of next month
+                profile.save()
+        else:
+            # If no purchases this month, remove VIP
+            if profile.is_vip and month_orders.count() == 0:
+                profile.is_vip = False
+                profile.vip_until = now
+                profile.save()
 
 @extend_schema(
     summary="Listar pedidos",

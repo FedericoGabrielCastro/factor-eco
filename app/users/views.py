@@ -121,3 +121,16 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             'month': month,
             'year': year
         })
+
+    @action(detail=False, methods=['get'])
+    def vip_status(self, request):
+        """Return VIP status for the authenticated user."""
+        if not request.user.is_authenticated:
+            return Response({'error': 'Not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
+        return Response({
+            'is_vip': profile.is_vip,
+            'vip_since': profile.vip_since,
+            'vip_until': profile.vip_until,
+            'is_vip_active': profile.is_vip_active,
+        })

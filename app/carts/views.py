@@ -1,13 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import get_object_or_404
 from django.db import transaction
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiExample
+from rest_framework.exceptions import ValidationError
 from .models import Cart, CartItem
 from .serializers import CartSerializer, CartCreateSerializer, CartItemSerializer
 from products.models import Product
+from promotions.models import SpecialDatePromotion
+from datetime import date
 
 
 @extend_schema(
@@ -36,16 +38,61 @@ from products.models import Product
     ],
     tags=['carts']
 )
-class CartCreateView(generics.CreateAPIView):
+class CartListCreateView(generics.ListCreateAPIView):
     """
-    Create a new cart.
+    List all carts for the authenticated user (GET), or create a new cart (POST).
+    Soporta filtros por type, status y simulación de fecha.
     """
-    serializer_class = CartCreateSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CartCreateSerializer
+        return CartSerializer
+
+    def get_queryset(self):
+        qs = Cart.objects.filter(user=self.request.user)
+        cart_type = self.request.query_params.get('type')
+        status = self.request.query_params.get('status')
+        if cart_type:
+            qs = qs.filter(cart_type=cart_type)
+        if status:
+            qs = qs.filter(status=status)
+        return qs
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        if hasattr(self.request, 'simulated_date'):
+            ctx['simulated_date'] = self.request.simulated_date
+        return ctx
+
     def perform_create(self, serializer):
-        """Create cart with current user."""
-        serializer.save(user=self.request.user)
+        user = self.request.user
+        is_vip = hasattr(user, 'profile') and user.profile.is_vip
+        simulated_date = getattr(self.request, 'simulated_date', None)
+        effective_date = simulated_date or date.today()
+        if is_vip:
+            cart_type = 'VIP'
+        else:
+            promo = SpecialDatePromotion.objects.filter(
+                start_date__lte=effective_date,
+                end_date__gte=effective_date
+            ).first()
+            if promo:
+                cart_type = 'FECHA_ESPECIAL'
+            else:
+                cart_type = 'COMUN'
+        serializer.save(user=user, cart_type=cart_type)
+
+    def create(self, request, *args, **kwargs):
+        """Override to return full cart data after creation."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        cart = serializer.instance
+        output_serializer = CartSerializer(cart, context=self.get_serializer_context())
+        headers = self.get_success_headers(output_serializer.data)
+        return Response(output_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 @extend_schema_view(
@@ -70,6 +117,12 @@ class CartDetailView(generics.RetrieveAPIView, generics.DestroyAPIView):
     def get_queryset(self):
         """Filter carts by current user."""
         return Cart.objects.filter(user=self.request.user)
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        if hasattr(self.request, 'simulated_date'):
+            ctx['simulated_date'] = self.request.simulated_date
+        return ctx
 
 
 @extend_schema(
@@ -101,8 +154,39 @@ class CartItemCreateView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_cart(self):
-        """Get cart or return 404."""
-        return get_object_or_404(Cart, id=self.kwargs['cart_id'], user=self.request.user)
+        """Get cart or create one if it does not exist, considering VIP status and special date promotions."""
+        user = self.request.user
+        cart_id = self.kwargs.get('cart_id')
+        if cart_id:
+            try:
+                return Cart.objects.get(id=cart_id, user=user)
+            except Cart.DoesNotExist:
+                pass
+        
+        # Determine cart type based on VIP status and special date promotions
+        is_vip = hasattr(user, 'profile') and user.profile.is_vip
+        simulated_date = getattr(self.request, 'simulated_date', None)
+        effective_date = simulated_date or date.today()
+        
+        if is_vip:
+            cart_type = 'VIP'
+        else:
+            promo = SpecialDatePromotion.objects.filter(
+                start_date__lte=effective_date,
+                end_date__gte=effective_date
+            ).first()
+            if promo:
+                cart_type = 'FECHA_ESPECIAL'
+            else:
+                cart_type = 'COMUN'
+        
+        # Look for existing active cart of the determined type
+        cart = Cart.objects.filter(user=user, cart_type=cart_type, status='ACTIVO').first()
+        if cart:
+            return cart
+        
+        # If no existing cart, create a new one
+        return Cart.objects.create(user=user, cart_type=cart_type)
 
     @transaction.atomic
     def perform_create(self, serializer):

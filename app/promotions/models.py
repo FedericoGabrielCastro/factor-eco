@@ -9,6 +9,7 @@ class SpecialDatePromotion(models.Model):
     start_date = models.DateField(help_text='Start date of the promotion period')
     end_date = models.DateField(help_text='End date of the promotion period')
     description = models.CharField(max_length=200, help_text='Description of the promotion')
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, help_text='Fixed discount amount in pesos', default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

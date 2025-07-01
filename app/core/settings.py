@@ -45,9 +45,11 @@ INSTALLED_APPS = [
     'promotions',
     'carts',
     'orders',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -156,3 +158,12 @@ SPECTACULAR_SETTINGS = {
     'COMPONENT_SPLIT_REQUEST': True,
     'SCHEMA_PATH_PREFIX': '/api/',
 }
+
+# CORS settings for development only
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (development only)
+CORS_ALLOW_CREDENTIALS = True  # Allow cookies and credentials
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]

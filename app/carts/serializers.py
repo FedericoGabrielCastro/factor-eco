@@ -64,7 +64,8 @@ class CartSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         """Override to include calculated fields."""
         data = super().to_representation(instance)
-        totals = instance.get_total_payable()
+        simulated_date = self.context.get('simulated_date', None)
+        totals = instance.get_total_payable(simulated_date=simulated_date)
         data['subtotal'] = totals['subtotal']
         data['total_payable'] = totals['total_payable']
         data['discounts_applied'] = totals['discounts_applied']

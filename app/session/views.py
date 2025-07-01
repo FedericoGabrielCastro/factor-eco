@@ -82,12 +82,16 @@ def login_view(request):
 @api_view(['POST'])
 def logout_view(request):
     """
-    Handle user logout.
+    Handle user logout and delete sessionid and csrftoken cookies.
     """
     logout(request)
-    return Response({
+    response = Response({
         'message': 'Logout successful'
     }, status=status.HTTP_200_OK)
+    # Delete sessionid and csrftoken cookies
+    response.delete_cookie('sessionid')
+    response.delete_cookie('csrftoken')
+    return response
 
 
 @extend_schema(

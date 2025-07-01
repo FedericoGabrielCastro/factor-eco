@@ -16,127 +16,130 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write('Checking base products...')
+        # Delete all old products
+        Product.objects.all().delete()
+        self.stdout.write('All existing products deleted.')
         
         # Base products data
         base_products = [
             {
-                'name': 'Eco-Friendly Water Bottle',
-                'description': 'Reusable stainless steel water bottle, perfect for reducing plastic waste. 500ml capacity with thermal insulation.',
-                'price': 29.99,
+                'name': 'Botella de Agua Ecológica',
+                'description': 'Botella reutilizable de acero inoxidable, ideal para reducir el uso de plásticos. Capacidad de 500ml con aislamiento térmico.',
+                'price': 3501.00,
                 'stock': 50
             },
             {
-                'name': 'Bamboo Toothbrush Set',
-                'description': 'Pack of 4 biodegradable bamboo toothbrushes with soft bristles. Eco-friendly alternative to plastic toothbrushes.',
-                'price': 12.99,
+                'name': 'Set de Cepillos de Bambú',
+                'description': 'Pack de 4 cepillos de dientes biodegradables de bambú con cerdas suaves. Alternativa ecológica a los cepillos plásticos.',
+                'price': 3590.00,
                 'stock': 100
             },
             {
-                'name': 'Organic Cotton Tote Bag',
-                'description': 'Large reusable shopping bag made from 100% organic cotton. Perfect for groceries and daily use.',
-                'price': 15.50,
+                'name': 'Bolsa Tote de Algodón Orgánico',
+                'description': 'Bolsa de compras reutilizable, grande, hecha 100% de algodón orgánico. Perfecta para compras y uso diario.',
+                'price': 3700.00,
                 'stock': 75
             },
             {
-                'name': 'Solar Power Bank',
-                'description': '10000mAh portable charger with solar panel. Charge your devices using renewable energy.',
-                'price': 45.99,
+                'name': 'Cargador Solar Portátil',
+                'description': 'Power bank de 10000mAh con panel solar. Carga tus dispositivos usando energía renovable.',
+                'price': 3999.99,
                 'stock': 30
             },
             {
-                'name': 'Beeswax Food Wraps',
-                'description': 'Set of 3 reusable food wraps made from organic cotton and beeswax. Alternative to plastic wrap.',
-                'price': 18.75,
+                'name': 'Envoltorios de Cera de Abeja',
+                'description': 'Set de 3 envoltorios reutilizables hechos de algodón orgánico y cera de abeja. Alternativa al film plástico.',
+                'price': 3550.00,
                 'stock': 60
             },
             {
-                'name': 'LED Energy Saving Bulb Pack',
-                'description': 'Pack of 4 LED bulbs, 9W equivalent to 60W incandescent. Save energy and money.',
-                'price': 22.99,
+                'name': 'Pack de Lámparas LED Bajo Consumo',
+                'description': 'Pack de 4 lámparas LED, 9W equivalentes a 60W incandescentes. Ahorra energía y dinero.',
+                'price': 3600.00,
                 'stock': 80
             },
             {
-                'name': 'Compostable Phone Case',
-                'description': 'Biodegradable phone case made from plant-based materials. Fits iPhone and Samsung models.',
-                'price': 19.99,
+                'name': 'Funda de Teléfono Compostable',
+                'description': 'Funda biodegradable hecha de materiales vegetales. Compatible con modelos iPhone y Samsung.',
+                'price': 3750.00,
                 'stock': 45
             },
             {
-                'name': 'Hemp Face Mask',
-                'description': 'Reusable face mask made from organic hemp fabric. Washable and breathable.',
-                'price': 8.99,
+                'name': 'Barbijo de Tela de Cáñamo',
+                'description': 'Barbijo reutilizable hecho de tela de cáñamo orgánico. Lavable y respirable.',
+                'price': 3520.00,
                 'stock': 120
             },
             {
-                'name': 'Bamboo Cutlery Set',
-                'description': 'Travel-friendly bamboo cutlery set with carrying case. Say no to disposable plastic utensils.',
-                'price': 14.50,
+                'name': 'Set de Cubiertos de Bambú',
+                'description': 'Set de cubiertos de bambú con estuche para llevar. Di no a los utensilios plásticos descartables.',
+                'price': 3800.00,
                 'stock': 90
             },
             {
-                'name': 'Recycled Paper Notebook',
-                'description': 'A5 notebook made from 100% recycled paper. 100 pages, perfect for notes and sketches.',
-                'price': 6.99,
+                'name': 'Cuaderno de Papel Reciclado',
+                'description': 'Cuaderno A5 hecho 100% de papel reciclado. 100 hojas, ideal para notas y bocetos.',
+                'price': 3555.00,
                 'stock': 150
             },
             {
-                'name': 'Organic Soap Bar',
-                'description': 'Natural soap bar made from organic ingredients. No plastic packaging, gentle on skin.',
-                'price': 4.99,
+                'name': 'Jabón Orgánico en Barra',
+                'description': 'Jabón natural elaborado con ingredientes orgánicos. Sin envase plástico, suave para la piel.',
+                'price': 3600.00,
                 'stock': 200
             },
             {
-                'name': 'Stainless Steel Straw Set',
-                'description': 'Set of 4 reusable stainless steel straws with cleaning brush. Reduce single-use plastic.',
-                'price': 11.99,
+                'name': 'Set de Sorbetes de Acero Inoxidable',
+                'description': 'Set de 4 sorbetes reutilizables de acero inoxidable con cepillo de limpieza. Reduce el plástico de un solo uso.',
+                'price': 3700.00,
                 'stock': 70
             },
             {
-                'name': 'Bamboo Coffee Cup',
-                'description': 'Insulated coffee cup made from bamboo fiber. Keep your drinks hot or cold for hours.',
-                'price': 24.99,
+                'name': 'Vaso de Café de Bambú',
+                'description': 'Vaso térmico hecho de fibra de bambú. Mantiene tus bebidas calientes o frías por horas.',
+                'price': 3900.00,
                 'stock': 40
             },
             {
-                'name': 'Organic Cotton Socks',
-                'description': 'Pack of 3 pairs of socks made from 100% organic cotton. Comfortable and sustainable.',
-                'price': 16.99,
+                'name': 'Pack de Medias de Algodón Orgánico',
+                'description': 'Pack de 3 pares de medias hechas 100% de algodón orgánico. Cómodas y sustentables.',
+                'price': 3550.00,
                 'stock': 85
             },
             {
-                'name': 'Solar Garden Lights',
-                'description': 'Set of 6 solar-powered garden lights. Automatic on/off, no electricity needed.',
-                'price': 34.99,
+                'name': 'Luces Solares para Jardín',
+                'description': 'Set de 6 luces solares para jardín. Encendido/apagado automático, sin necesidad de electricidad.',
+                'price': 4000.00,
                 'stock': 35
             },
             {
-                'name': 'Bamboo Hair Brush',
-                'description': 'Natural bamboo hair brush with boar bristles. Gentle on hair and scalp.',
-                'price': 13.50,
+                'name': 'Cepillo de Pelo de Bambú',
+                'description': 'Cepillo natural de bambú con cerdas de jabalí. Suave con el cabello y el cuero cabelludo.',
+                'price': 3600.00,
                 'stock': 55
             },
             {
-                'name': 'Recycled Glass Vase',
-                'description': 'Beautiful vase made from 100% recycled glass. Perfect for flowers or decoration.',
-                'price': 28.99,
+                'name': 'Florero de Vidrio Reciclado',
+                'description': 'Hermoso florero hecho 100% de vidrio reciclado. Ideal para flores o decoración.',
+                'price': 3700.00,
                 'stock': 25
             },
             {
-                'name': 'Organic Tea Set',
-                'description': 'Ceramic tea set made from natural materials. Includes teapot and 4 cups.',
-                'price': 39.99,
+                'name': 'Set de Té Orgánico',
+                'description': 'Set de té de cerámica hecho con materiales naturales. Incluye tetera y 4 tazas.',
+                'price': 3990.00,
                 'stock': 20
             },
             {
-                'name': 'Bamboo Phone Stand',
-                'description': 'Adjustable phone stand made from sustainable bamboo. Perfect for video calls.',
-                'price': 9.99,
+                'name': 'Soporte para Teléfono de Bambú',
+                'description': 'Soporte ajustable para teléfono hecho de bambú sustentable. Perfecto para videollamadas.',
+                'price': 3550.00,
                 'stock': 95
             },
             {
-                'name': 'Eco-Friendly Laundry Detergent',
-                'description': 'Plant-based laundry detergent in biodegradable packaging. Gentle on clothes and environment.',
-                'price': 17.99,
+                'name': 'Detergente Ecológico para Ropa',
+                'description': 'Detergente para ropa a base de plantas en envase biodegradable. Suave con la ropa y el ambiente.',
+                'price': 3600.00,
                 'stock': 65
             }
         ]

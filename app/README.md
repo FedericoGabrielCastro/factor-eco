@@ -18,6 +18,9 @@ Factor Eco es una plataforma e-commerce desarrollada en Django 5.2.3 y Python 3.
    - Ejecuta migraciones
    - Carga 15 productos base
    - Crea 10 usuarios de prueba (`testuser1` a `testuser10`, contraseña: `testpassword123`)
+   - **Crea 2 usuarios VIP activos** (`vipuser1`, `vipuser2`)
+   - **Crea 2 usuarios ex-VIP** (`exvipuser1`, `exvipuser2`)
+   - **Crea 2 promociones especiales de ejemplo**
    - Levanta el servidor en `http://localhost:8000`
 
 3. **Accede a la documentación interactiva:**
@@ -50,7 +53,14 @@ app/
 - **Gestión de usuarios extendidos** (modelo `UserProfile` con estado VIP, fechas de vigencia, etc).
 - Señales para crear automáticamente el perfil al crear un usuario.
 - Serializadores y vistas para filtrar usuarios por estado VIP y ver historial de cambios.
-- Comando para crear 10 usuarios de prueba (`create_base_users`).
+- **Comando para crear usuarios de prueba** (`create_base_users`):
+  - 10 usuarios normales (`testuser1` a `testuser10`)
+  - 2 usuarios VIP activos (`vipuser1`, `vipuser2`)
+  - 2 usuarios ex-VIP (`exvipuser1`, `exvipuser2`)
+- **Gestión automática de estado VIP**:
+  - Usuarios que gastan >$10,000 en un mes se vuelven VIP el mes siguiente
+  - Usuarios que no compran en un mes pierden VIP
+  - Se considera el valor real pagado (después de descuentos)
 
 ### `session/`
 - Autenticación por sesión (login, logout, usuario actual).
@@ -66,37 +76,99 @@ app/
 
 ### `promotions/`
 - Gestión de promociones por fechas especiales (`SpecialDatePromotion`).
-- Middleware para simular fecha por parámetro de URL.
+- **Middleware para simular fecha** por parámetro de URL (`?fecha=YYYY-MM-DD`).
 - Utilidades para obtener la fecha efectiva.
 - Vistas para listar promociones activas.
+- **Comando para crear promociones base de ejemplo:**
+  ```bash
+  poetry run python manage.py create_base_promotions
+  ```
+  Esto crea dos promociones:
+  - "Mega descuento 2025" ($300 descuento, válida todo 2025)
+  - "Año del programador 2024" ($300 descuento, válida todo 2024)
 - Tests automatizados.
 
 ### `carts/`
 - Gestión de carritos de compra (`Cart`, `CartItem`).
-- Lógica de descuentos por cantidad, tipo de usuario (VIP), o fecha especial.
+- **Tipos de carrito exclusivos**:
+  - `VIP`: Para usuarios con estado VIP
+  - `FECHA_ESPECIAL`: Para fechas con promociones activas
+  - `COMUN`: Para usuarios normales sin promociones
+- **Lógica de descuentos automática**:
+  1. **25% descuento** si se compran exactamente 4 productos
+  2. **$100 descuento** si se compran más de 10 productos
+  3. **$300 descuento** si el carrito es de fecha especial
+  4. **Producto más barato gratis + $500 descuento** si el carrito es VIP
 - Serializadores y vistas para crear, modificar y eliminar items del carrito.
+- **Creación automática de carritos** según tipo de usuario y promociones activas.
 - Señal para finalizar carrito y comando para limpiar carritos inactivos (`cleanup_carts`).
 
 ### `orders/`
 - Gestión de pedidos (`Order`) relacionados uno a uno con carritos finalizados.
 - Serializadores y vistas para crear y listar pedidos.
-- Actualización automática del estado VIP del usuario según compras.
+- **Actualización automática del estado VIP** del usuario según compras mensuales.
+- Cálculo del total real pagado (después de descuentos).
 
 ### `core/`
 - Configuración principal del proyecto y utilidades globales.
+- Middleware de simulación de fecha configurado.
 
 ---
 
 ## 👤 Usuarios de prueba
-- **Usuarios:** `testuser1`, `testuser2`, ..., `testuser10`
-- **Contraseña:** `testpassword123`
+- **Usuarios normales:** `testuser1`, `testuser2`, ..., `testuser10`
+- **Usuarios VIP activos:** `vipuser1`, `vipuser2`
+- **Usuarios ex-VIP:** `exvipuser1`, `exvipuser2`
+- **Contraseña para todos:** `testpassword123`
 - **Todos los usuarios inician sin carritos ni historial de pedidos.**
+
+---
+
+## 🎯 Funcionalidades principales
+
+### **Tipos de carrito y exclusividad**
+- Los carritos son mutuamente excluyentes: VIP, FECHA_ESPECIAL, o COMUN
+- Un carrito NO puede ser VIP y de fecha especial a la vez
+- La lógica determina automáticamente el tipo basado en estado VIP y promociones activas
+
+### **Funcionalidades del carrito**
+- ✅ Crear carrito nuevo
+- ✅ Eliminar carrito
+- ✅ Agregar productos al carrito
+- ✅ Eliminar productos del carrito
+- ✅ Consultar estado del carrito (total a pagar)
+- ✅ Visualizar ítems sin implementar pagos
+
+### **Simulación de fecha**
+- Parámetro `?fecha=YYYY-MM-DD` para simular fechas
+- Middleware `DateSimulationMiddleware` procesa el parámetro
+- Permite probar promociones de diferentes fechas
+
+### **Registro de compras**
+- Las compras se registran en el modelo `Order`
+- Carritos no finalizados se mantienen activos
+- Sistema de finalización de órdenes implementado
+
+### **Múltiples compras por día**
+- Los usuarios pueden crear múltiples carritos
+- Cada carrito puede ser finalizado independientemente
+
+### **Cálculo de descuentos**
+- ✅ 25% descuento por exactamente 4 productos
+- ✅ $100 descuento por más de 10 productos
+- ✅ $300 descuento por fecha especial
+- ✅ Producto más barato gratis + $500 descuento para VIP
+
+### **Gestión automática de VIP**
+- Usuarios que gastan >$10,000 en un mes se vuelven VIP
+- Usuarios que no compran en un mes pierden VIP
+- Se considera el valor real pagado (después de descuentos)
 
 ---
 
 ## 🛠️ Comandos útiles
 
-- **Levantar entorno demo:**
+- **Levantar entorno demo completo:**
   ```bash
   ./setup_demo.sh
   ```
@@ -108,6 +180,10 @@ app/
   ```bash
   poetry run python manage.py create_base_users
   ```
+- **Crear promociones base manualmente:**
+  ```bash
+  poetry run python manage.py create_base_promotions
+  ```
 - **Limpiar carritos inactivos:**
   ```bash
   poetry run python manage.py cleanup_carts
@@ -118,3 +194,13 @@ app/
 ## 📚 Documentación API
 - Swagger: `/api/docs/`
 - Redoc: `/api/redoc/`
+
+---
+
+## 🔧 Tecnologías utilizadas
+- **Backend**: Django 5.2.3 + Django REST Framework
+- **Base de datos**: SQLite (configurable)
+- **Autenticación**: Session-based
+- **Documentación**: Swagger/OpenAPI con drf-spectacular
+- **Gestión de dependencias**: Poetry
+- **Middleware**: Simulación de fechas para testing

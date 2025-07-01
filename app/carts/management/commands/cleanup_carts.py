@@ -19,17 +19,26 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Execute the command."""
-        # Get yesterday's date
+        # --- Eliminar carritos activos duplicados por usuario y tipo ---
+        duplicates = 0
+        for user_id, cart_type in Cart.objects.filter(status='ACTIVO').values_list('user_id', 'cart_type').distinct():
+            carts = Cart.objects.filter(user_id=user_id, cart_type=cart_type, status='ACTIVO').order_by('-created_at')
+            if carts.count() > 1:
+                to_delete = list(carts[1:])
+                duplicates += len(to_delete)
+                Cart.objects.filter(id__in=[c.id for c in to_delete]).delete()
+        if duplicates > 0:
+            self.stdout.write(self.style.SUCCESS(f'Deleted {duplicates} duplicate ACTIVE carts (kept only the most recent per user and type).'))
+        else:
+            self.stdout.write(self.style.SUCCESS('No duplicate ACTIVE carts found.'))
+
+        # --- Limpieza original de carritos inactivos antiguos ---
         yesterday = timezone.now().date() - timedelta(days=1)
-        
-        # Find inactive carts from previous days
         inactive_carts = Cart.objects.filter(
             status='ACTIVO',
             created_at__date__lt=yesterday
         )
-        
         count = inactive_carts.count()
-        
         if options['dry_run']:
             self.stdout.write(
                 self.style.WARNING(

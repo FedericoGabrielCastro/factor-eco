@@ -17,5 +17,8 @@ poetry run python manage.py ensure_base_products --force
 # Create base users
 poetry run python manage.py create_base_users
 
+# Create base promotions
+poetry run python manage.py create_base_promotions
+
 # Start development server
 poetry run python manage.py runserver 0.0.0.0:8000 

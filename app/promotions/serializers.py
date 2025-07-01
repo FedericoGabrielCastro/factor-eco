@@ -13,6 +13,7 @@ class SpecialDatePromotionSerializer(serializers.ModelSerializer):
             'start_date',
             'end_date',
             'description',
+            'discount_amount',
             'created_at',
             'updated_at'
         ]
