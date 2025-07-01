@@ -22,6 +22,7 @@ export const vitestConfig = defineConfig({
     alias: {
       '@/pages': path.resolve(__dirname, 'src/pages'),
       '@/router': path.resolve(__dirname, 'src/router'),
+      //TODO: Add more aliases here
     },
     coverage: {
       provider: 'v8',

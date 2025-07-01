@@ -62,7 +62,10 @@ const ProductCard: React.FC<{
   const totalPrice = product.price * cartQuantity
 
   return (
-    <div className='flex h-full min-h-[320px] flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-md transition-shadow duration-300 hover:shadow-lg'>
+    <div
+      className='flex h-full min-h-[320px] flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-md transition-shadow duration-300 hover:shadow-lg'
+      data-testid='products-page'
+    >
       <div className='flex flex-1 flex-col justify-between p-6'>
         <div>
           <h3 className='mb-2 text-xl font-bold text-gray-800'>{product.name}</h3>

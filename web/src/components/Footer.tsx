@@ -2,7 +2,10 @@ import React from 'react'
 
 const Footer: React.FC = () => {
   return (
-    <footer className='from-sky-blue to-mint-green bg-gradient-to-r p-4 text-center text-white shadow-lg'>
+    <footer
+      className='from-sky-blue to-mint-green bg-gradient-to-r p-4 text-center text-white shadow-lg'
+      data-testid='footer'
+    >
       <div className='flex items-center justify-center gap-2'>
         <div className='inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/20'>
           <span className='text-xs font-bold'>FE</span>

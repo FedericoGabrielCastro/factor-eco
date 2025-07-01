@@ -110,7 +110,7 @@ const CartDetailPage: React.FC = () => {
   }
 
   return (
-    <div className='mx-auto max-w-2xl px-2 py-6 sm:px-0'>
+    <div className='mx-auto max-w-2xl px-2 py-6 sm:px-0' data-testid='cart-detail-page'>
       {/* Header with cart icon and type */}
       <div className='mb-6 flex items-center gap-3'>
         <FaShoppingCart className='text-sky-blue text-3xl' />

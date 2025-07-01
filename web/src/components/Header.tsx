@@ -12,7 +12,10 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className='from-sky-blue to-mint-green flex flex-col gap-2 bg-gradient-to-r p-4 text-white shadow-lg'>
+    <header
+      className='from-sky-blue to-mint-green flex flex-col gap-2 bg-gradient-to-r p-4 text-white shadow-lg'
+      data-testid='header'
+    >
       {/* User info and logout button */}
       <div className='mb-2 flex items-center justify-between'>
         <div className='flex items-center gap-3'>

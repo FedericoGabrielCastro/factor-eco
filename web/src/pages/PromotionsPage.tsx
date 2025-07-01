@@ -31,7 +31,7 @@ const PromotionsPage: React.FC = () => {
   const promotions = data?.promotions ?? []
 
   return (
-    <div>
+    <div data-testid='promotions-page'>
       {/* Simulated date panel as a full-width bar - all UI text in Spanish */}
       <div className='mb-8 w-full'>
         <div className='border-sky-blue flex w-full flex-col gap-3 rounded-none border-2 bg-white/90 p-4 shadow-lg md:flex-row md:items-center md:rounded-xl'>

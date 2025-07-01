@@ -75,7 +75,7 @@ const CartsListPage: React.FC = () => {
     )
 
   return (
-    <div className='w-full px-4 py-6'>
+    <div className='w-full px-4 py-6' data-testid='carts-list-page'>
       {/* Header left-aligned, full width */}
       <div className='mb-4 flex w-full items-center gap-2'>
         <FaShoppingCart className='text-sky-blue text-2xl' />

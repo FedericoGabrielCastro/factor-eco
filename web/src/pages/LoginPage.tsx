@@ -13,7 +13,10 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className='from-sky-blue/20 to-mint-green/20 flex min-h-screen items-center justify-center bg-gradient-to-br p-4'>
+    <div
+      className='from-sky-blue/20 to-mint-green/20 flex min-h-screen items-center justify-center bg-gradient-to-br p-4'
+      data-testid='login-page'
+    >
       <div className='w-full max-w-md'>
         {/* Logo/Brand Section */}
         <div className='mb-8 text-center'>

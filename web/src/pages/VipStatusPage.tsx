@@ -31,7 +31,10 @@ const VipStatusPage: React.FC = () => {
 
   const isVip = !!vipStatus?.is_vip
   return (
-    <div className='mx-auto mt-10 flex max-w-md flex-col items-center rounded-xl bg-white p-8 text-center shadow-lg'>
+    <div
+      className='mx-auto mt-10 flex max-w-md flex-col items-center rounded-xl bg-white p-8 text-center shadow-lg'
+      data-testid='vip-status-page'
+    >
       <FaCrown className={`mb-4 text-5xl ${isVip ? 'text-yellow-400' : 'text-gray-400'}`} />
       <h1 className='mb-2 text-3xl font-bold'>Estado de cuenta VIP</h1>
       {isVip ? (

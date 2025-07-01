@@ -34,16 +34,16 @@ web/
 
 Puedes iniciar sesión con cualquiera de estos usuarios de prueba:
 
-| Usuario         | Contraseña         | Tipo         |
-|-----------------|-------------------|--------------|
-| testuser1       | testpassword123    | Normal       |
-| testuser2       | testpassword123    | Normal       |
-| ...             | ...                | ...          |
-| testuser10      | testpassword123    | Normal       |
-| vipuser1        | testpassword123    | VIP          |
-| vipuser2        | testpassword123    | VIP          |
-| exvipuser1      | testpassword123    | Ex-VIP       |
-| exvipuser2      | testpassword123    | Ex-VIP       |
+| Usuario    | Contraseña      | Tipo   |
+| ---------- | --------------- | ------ |
+| testuser1  | testpassword123 | Normal |
+| testuser2  | testpassword123 | Normal |
+| ...        | ...             | ...    |
+| testuser10 | testpassword123 | Normal |
+| vipuser1   | testpassword123 | VIP    |
+| vipuser2   | testpassword123 | VIP    |
+| exvipuser1 | testpassword123 | Ex-VIP |
+| exvipuser2 | testpassword123 | Ex-VIP |
 
 ---
 
@@ -70,6 +70,7 @@ npm install
 ```bash
 npm run dev
 ```
+
 Esto inicia la app en modo desarrollo (por defecto en http://localhost:5173).
 
 ### Build de producción
@@ -77,6 +78,7 @@ Esto inicia la app en modo desarrollo (por defecto en http://localhost:5173).
 ```bash
 npm run build
 ```
+
 Genera los archivos estáticos optimizados en la carpeta `dist/`.
 
 ### Previsualizar el build de producción
@@ -84,6 +86,7 @@ Genera los archivos estáticos optimizados en la carpeta `dist/`.
 ```bash
 npm run preview
 ```
+
 Sirve localmente el build de producción para pruebas finales.
 
 ### Lint
@@ -110,4 +113,5 @@ npm test
 
 - El frontend se comunica con el backend Django vía API REST.
 - Puedes simular la fecha desde la página de promociones para probar descuentos especiales.
+
 ---

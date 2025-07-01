@@ -25,7 +25,7 @@ const CreateCartPage: React.FC = () => {
   }
 
   return (
-    <div>
+    <div data-testid='create-cart-page'>
       <h1 className='mb-4 text-2xl font-bold'>Create Cart</h1>
       <form onSubmit={handleSubmit} className='space-y-4'>
         <div>
