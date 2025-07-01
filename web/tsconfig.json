@@ -21,10 +21,15 @@
     "noFallthroughCasesInSwitch": true,
     "strictNullChecks": false,
     /* Alias */
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {
-      "@/pages/*": ["src/pages/*"],
-      "@/router/*": ["src/router/*"],
+      "@/api/*": ["api/*"],
+      "@/hooks/*": ["hooks/*"],
+      "@/context/*": ["context/*"],
+      "@/pages/*": ["pages/*"],
+      "@/routes/*": ["routes/*"],
+      "@/components/*": ["components/*"],
+      "@/utils/*": ["utils/*"]
     }
   },
   "include": ["vite.config.ts", "tailwind.config.ts", "src"],
